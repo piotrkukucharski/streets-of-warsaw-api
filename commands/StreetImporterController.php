@@ -24,9 +24,11 @@ class StreetImporterController extends Controller
 	{
 		$this->csv = Reader::createFromString(file_get_contents(self::URL_CSV));
 		$this->csv->setHeaderOffset(0);
+		echo 'import districts' . PHP_EOL;
 		$this->importDistricts();
+		echo 'import types' . PHP_EOL;
 		$this->importTypes();
-
+		echo 'import streets' . PHP_EOL;
 		foreach ($this->csv->getRecords() as $record) {
 			if (Street::findOne(['name' => trim($record['Full Name'])]) === Null) {
 				$street = new Street();
