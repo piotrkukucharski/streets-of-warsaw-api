@@ -45,4 +45,3 @@ themes/classic/views/
 # composer.lock
 
 /config/db.php
-/config/web.php
