@@ -5,6 +5,7 @@ namespace app\commands;
 
 
 use app\models\District;
+use app\models\MigrationCsv;
 use app\models\Street;
 use app\models\Type;
 use League\Csv\Reader;
@@ -22,13 +23,27 @@ class StreetImporterController extends Controller
 
 	public function actionIndex()
 	{
-		$this->csv = Reader::createFromString(file_get_contents(self::URL_CSV));
+		$str_csv = file_get_contents(self::URL_CSV);
+		$md5_csv = md5($str_csv);
+
+		if (MigrationCsv::findOne(['hash' => $md5_csv]) !== Null) {
+			if (count(Street::findAll([])) > 0 && count(Type::findAll([])) > 0 && count(District::findAll([])) > 0) {
+				MigrationCsv::deleteAll();
+			} else {
+				echo 'CSV was migrate' . PHP_EOL;
+				die;
+			}
+
+		}
+
+		$this->csv = Reader::createFromString($str_csv);
 		$this->csv->setHeaderOffset(0);
 		echo 'import districts' . PHP_EOL;
 		$this->importDistricts();
 		echo 'import types' . PHP_EOL;
 		$this->importTypes();
 		echo 'import streets' . PHP_EOL;
+		Street::deleteAll();
 		foreach ($this->csv->getRecords() as $record) {
 			if (Street::findOne(['name' => trim($record['Full Name'])]) === Null) {
 				$street = new Street();
@@ -42,10 +57,15 @@ class StreetImporterController extends Controller
 				}
 			}
 		}
+		$migrationCsv = new MigrationCsv();
+		$migrationCsv->hash = $md5_csv;
+		$migrationCsv->created_at = (new \DateTime())->format('Y-m-d H:i:s');
+		$migrationCsv->save();
 	}
 
 	private function importDistricts()
 	{
+		District::deleteAll();
 		foreach ($this->csv->getRecords() as $record) {
 			$districts = explode(',', $record['Districts']);
 			foreach ($districts as $item) {
@@ -61,6 +81,7 @@ class StreetImporterController extends Controller
 
 	private function importTypes()
 	{
+		Type::deleteAll();
 		foreach ($this->csv->getRecords() as $record) {
 			$type_name = trim($record['Type']);
 			if (Type::findOne(['name' => $type_name]) === Null) {
