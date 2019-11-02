@@ -24,6 +24,11 @@ class Street extends ActiveRecord
 		return '{{%streets}}';
 	}
 
+	public function fields()
+	{
+		return ['id', 'name', 'filler_name', 'short_name', 'type', 'districts'];
+	}
+
 	public function getDistricts()
 	{
 		return $this->hasMany(District::className(), ['id' => 'id_district'])
@@ -32,7 +37,7 @@ class Street extends ActiveRecord
 
 	public function getType()
 	{
-		return $this->hasMany(Type::className(), ['id' => 'id_type']);
+		return $this->hasOne(Type::className(), ['id' => 'id_type']);
 	}
 
 }

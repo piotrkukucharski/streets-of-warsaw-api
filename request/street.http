@@ -1,0 +1,20 @@
+GET http://streets-of-warsaw-api.loc/streets/1
+Accept: application/json
+
+###
+
+GET http://streets-of-warsaw-api.loc/streets
+Accept: application/json
+
+###
+
+GET http://streets-of-warsaw-api.loc/streets?search=gen.
+Accept: application/json
+
+###
+
+GET http://streets-of-warsaw-api.loc/streets?search=gen.&page=1
+
+Accept: application/json
+
+###
