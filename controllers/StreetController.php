@@ -13,6 +13,23 @@ class StreetController extends ActiveController
 	public $modelClass = 'app\models\Street';
 	public $reservedParams = ['sort', 'q'];
 
+	public function behaviors()
+	{
+		$behaviors = parent::behaviors();
+
+		// add CORS filter
+		$behaviors['corsFilter'] = [
+			'class' => \yii\filters\Cors::className(),
+			'cors' => [
+				// restrict access to
+				'Origin' => ['*'],
+				// Allow only POST and PUT methods
+				'Access-Control-Request-Method' => ['GET'],
+			],
+		];
+		return $behaviors;
+	}
+
 	public function actions()
 	{
 		$actions = parent::actions();
