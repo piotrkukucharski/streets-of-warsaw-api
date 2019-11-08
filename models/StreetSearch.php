@@ -25,6 +25,9 @@ class StreetSearch extends Street
 		$query = Street::find();
 		$dataProvider = new ActiveDataProvider([
 			'query' => $query,
+			'pagination' => [
+				'pageSize' => !empty($params['pageSize']) ? $params['pageSize'] : 20,
+			],
 		]);
 		if (!empty($params['search'])) {
 			$query->andFilterWhere(['like', 'name', $params['search']]);
