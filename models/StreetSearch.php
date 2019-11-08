@@ -26,7 +26,7 @@ class StreetSearch extends Street
 		$dataProvider = new ActiveDataProvider([
 			'query' => $query,
 			'pagination' => [
-				'pageSize' => !empty($params['pageSize']) ? $params['pageSize'] : 20,
+				'pageSizeLimit' => [0, 500],
 			],
 		]);
 		if (!empty($params['search'])) {
