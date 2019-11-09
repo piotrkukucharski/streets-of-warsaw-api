@@ -28,6 +28,11 @@ class StreetSearch extends Street
 			'pagination' => [
 				'pageSizeLimit' => [0, 500],
 			],
+            'sort'=>[
+                'defaultOrder' => [
+                    'name' => SORT_ASC,
+                ]
+            ],
 		]);
 		if (!empty($params['search'])) {
 			$query->andFilterWhere(['like', 'name', $params['search']]);
