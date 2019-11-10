@@ -3,43 +3,44 @@
 
 namespace app\controllers;
 
-use Yii;
-use yii\rest\ActiveController;
-
 use app\models\StreetSearch;
+use Yii;
+use yii\filters\Cors;
+use yii\rest\ActiveController;
 
 class StreetController extends ActiveController
 {
-	public $modelClass = 'app\models\Street';
-	public $reservedParams = ['sort', 'q'];
+    public $modelClass = 'app\models\Street';
+    public $enableCsrfValidation = false;
 
-	public function behaviors()
-	{
-		$behaviors = parent::behaviors();
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
 
-		// add CORS filter
-		$behaviors['corsFilter'] = [
-			'class' => \yii\filters\Cors::className(),
-			'cors' => [
-				// restrict access to
-				'Origin' => ['*'],
-				// Allow only POST and PUT methods
-				'Access-Control-Request-Method' => ['GET'],
-			],
-		];
-		return $behaviors;
-	}
+        // add CORS filter
+        $behaviors['corsFilter'] = [
+            'class' => Cors::className(),
+            'cors' => [
+                'Origin' => ['*'],
+                'Access-Control-Allow-Origin' => ['*'],
+                'Access-Control-Request-Method' => ['GET', 'POST', 'OPTIONS', 'HEAD'],
+                'Access-Control-Expose-Headers' => ['*'],
+            ],
+        ];
+        return $behaviors;
+    }
 
-	public function actions()
-	{
-		$actions = parent::actions();
-		$actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
-		return $actions;
-	}
+    public function actions()
+    {
+        $actions = parent::actions();
+        unset($actions['delete'], $actions['create']);
+        $actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
+        return $actions;
+    }
 
-	public function prepareDataProvider()
-	{
-		$searchModel = new StreetSearch();
-		return $searchModel->search(Yii::$app->request->queryParams);
-	}
+    public function prepareDataProvider()
+    {
+        $searchModel = new StreetSearch();
+        return $searchModel->search(Yii::$app->request->queryParams);
+    }
 }
